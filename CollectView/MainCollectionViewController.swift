@@ -7,11 +7,17 @@
 //
 
 import UIKit
+import Social
 
 private let reuseIdentifier = "Cell"
 
 class MainCollectionViewController: UICollectionViewController {
-
+    
+        @IBOutlet weak var compartirBoton: UIBarButtonItem!
+    
+    var multiSeleccion = false
+    var imagenesSeleccionadas:[Icono] = []
+    
     var iconosSet: [Icono] = [Icono(nombre: "candle", precio: 4.0, destacado: false),
                               Icono(nombre: "cat", precio: 150.0, destacado: true),
                               Icono(nombre: "dribbble", precio: 40.0, destacado: false),
@@ -79,6 +85,9 @@ class MainCollectionViewController: UICollectionViewController {
         let icono = iconosSet[indexPath.row]
         cell.iconoImageView.image = UIImage(named: icono.nombre)
         cell.iconoPrecioLabel.text = "\(icono.precio)€"
+        
+        cell.selectedBackgroundView = UIImageView(image: UIImage(named: "selected-bg"))
+        
         cell.backgroundView = (icono.destacado) ? UIImageView(image: UIImage(named: "feature-bg")) : nil
         
         return cell
@@ -88,12 +97,76 @@ class MainCollectionViewController: UICollectionViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) { //Un collection view puede tener varias selecciones
         if segue.identifier == "mostrarDetalle"{
-            if let indexPaths = collectionView?.indexPathsForSelectedItems {
-                let destinationController = segue.destination as! DetalleViewController
-                destinationController.icono = iconosSet[indexPaths[0].row]
-                collectionView?.deselectItem(at: indexPaths[0], animated: true)
-            }
+            
+                
+                if let indexPaths = collectionView?.indexPathsForSelectedItems {
+                    let destinationController = segue.destination as! DetalleViewController
+                    destinationController.icono = iconosSet[indexPaths[0].row]
+                    collectionView?.deselectItem(at: indexPaths[0], animated: true)
+                    
+                }
         }
+    }
+    
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if identifier == "mostrarDetalle" {
+            if multiSeleccion {
+            return false }
+            
+        }
+        return true
+    }
+    
+    //TE DETECTA AUTOMATICAMENTE LA PRESION LARGA Y AQUI ACTIVAS LA FUNCION
+    @IBAction func presionLarga(_ sender: AnyObject) {
+       print("Presion larga en ...")
+   }
+    
+    //En este caso utiliza la cuenta que el usuario tiene configurada en la cuenta de su telefono
+    @IBAction func botonCompartirApretado(_ sender: AnyObject) {
+        if multiSeleccion {
+            if imagenesSeleccionadas.count > 0 {
+                if SLComposeViewController.isAvailable(forServiceType: SLServiceTypeTwitter){
+                    let tweetComposer = SLComposeViewController(forServiceType: SLServiceTypeTwitter)
+                    tweetComposer?.setInitialText("Me gustan estas imagenes")
+                    for icon in imagenesSeleccionadas {
+                        tweetComposer?.add(UIImage(named: icon.nombre))
+                    }
+                    present(tweetComposer!, animated:true, completion: nil)
+                }
+            }
+            //Deseleccionamos las celdas
+            if let indexPaths = collectionView?.indexPathsForSelectedItems {
+                for index in indexPaths {
+                    collectionView?.deselectItem(at: index, animated: false)
+                }
+            }
+            //Borrar nuestro array imagenesSeleccionadas
+            imagenesSeleccionadas.removeAll(keepingCapacity: true)
+            
+            //Modo compartir a false
+            multiSeleccion = false
+            collectionView?.allowsMultipleSelection = false
+            compartirBoton.title = "Compartir"
+            compartirBoton.style = .plain
+            
+        } else {
+            multiSeleccion = true
+            collectionView?.allowsMultipleSelection = true
+            compartirBoton.title = "Hecho"
+            compartirBoton.style = .done
+        }
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard multiSeleccion else { return }
+        
+        let iconoSeleccionado = iconosSet[indexPath.row]
+        imagenesSeleccionadas.append(iconoSeleccionado)
+    }
+
+    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard multiSeleccion else { return }
     }
     // MARK: UICollectionViewDelegate
 

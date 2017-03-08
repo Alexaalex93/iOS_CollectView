@@ -12,7 +12,7 @@
         <scene sceneID="XEz-yf-YXZ">
             <objects>
                 <collectionViewController id="Zki-eD-Teu" customClass="MainCollectionViewController" customModule="CollectView" customModuleProvider="target" sceneMemberID="viewController">
-                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" dataMode="prototypes" id="s7m-lg-bBL">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="s7m-lg-bBL">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -30,7 +30,12 @@
                                     <rect key="frame" x="0.0" y="0.0" width="100" height="150"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DGp-Qu-x1l"/>
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="DGp-Qu-x1l">
+                                            <gestureRecognizers/>
+                                            <connections>
+                                                <outletCollection property="gestureRecognizers" destination="hqf-KA-YMo" appends="YES" id="gi6-ek-BZP"/>
+                                            </connections>
+                                        </imageView>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nHW-7I-RW3">
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="21" id="a8m-AJ-o9t"/>
@@ -41,6 +46,7 @@
                                         </label>
                                     </subviews>
                                 </view>
+                                <gestureRecognizers/>
                                 <constraints>
                                     <constraint firstItem="nHW-7I-RW3" firstAttribute="leading" secondItem="3tX-6b-AAK" secondAttribute="leading" id="6FH-5v-4hz"/>
                                     <constraint firstAttribute="bottom" secondItem="nHW-7I-RW3" secondAttribute="bottom" constant="8" id="C0x-A3-eBd"/>
@@ -55,6 +61,7 @@
                                 <connections>
                                     <outlet property="iconoImageView" destination="DGp-Qu-x1l" id="FVL-U6-M5e"/>
                                     <outlet property="iconoPrecioLabel" destination="nHW-7I-RW3" id="en5-QJ-2eM"/>
+                                    <outletCollection property="gestureRecognizers" destination="hqf-KA-YMo" appends="YES" id="nS6-lj-UgF"/>
                                     <segue destination="m41-K0-SG8" kind="presentation" identifier="mostrarDetalle" id="MjN-AD-uDe"/>
                                 </connections>
                             </collectionViewCell>
@@ -64,9 +71,23 @@
                             <outlet property="delegate" destination="Zki-eD-Teu" id="8Zq-Ha-fzU"/>
                         </connections>
                     </collectionView>
-                    <navigationItem key="navigationItem" id="qoi-qR-kCc"/>
+                    <navigationItem key="navigationItem" id="qoi-qR-kCc">
+                        <barButtonItem key="rightBarButtonItem" title="Compartir" id="oC3-qY-WuU">
+                            <connections>
+                                <action selector="botonCompartirApretado:" destination="Zki-eD-Teu" id="abG-q1-oOp"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="compartirBoton" destination="oC3-qY-WuU" id="nz2-v5-w8e"/>
+                    </connections>
                 </collectionViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="9lX-bE-JqW" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <pongPressGestureRecognizer allowableMovement="10" minimumPressDuration="0.5" id="hqf-KA-YMo">
+                    <connections>
+                        <action selector="presionLarga:" destination="Zki-eD-Teu" id="gCw-Cy-yCZ"/>
+                    </connections>
+                </pongPressGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="1927.2" y="115.59220389805098"/>
         </scene>
